@@ -100,7 +100,6 @@ void Main_Menu()
                 {
                 case 1:
                     cout << "Enter The ID of Visitor you want to Update: ";
-                    cout << "Enter ID of Visitor to update: ";
                     cin >> v.id;
                     cin.ignore();
                     cout << "Enter New Visitor Name : ";
@@ -244,7 +243,6 @@ void Main_Menu()
                 {
                 case 1:
                     cout << "Enter The ID of Book you want to Update: ";
-                    cout << "Enter ID of Book to update: ";
                     cin >> b.id;
                     cin.ignore();
                     cout << "Enter New book Name : ";

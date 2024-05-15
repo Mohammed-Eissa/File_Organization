@@ -216,7 +216,6 @@ void Book::remove_by_id(int id)
     books.write((char *)&deletedFlag, sizeof(char));
     books.write((char *)&header, sizeof(short));
     books.write((char *)&len, sizeof(int));
-    cout << header << ' ' << len << '\n';
     header = offset;
     books.close();
     primary.erase(tmp_id);
@@ -440,7 +439,6 @@ void Book::Update(book &b, char name[])
     short off = search_By_name(name);
     if (off == -1)
         return void(cout << "There is no books with this name\n");
-    cin.ignore();
     cout << "Enter New book Category : ";
     cin.getline(b.category, 50);
     cout << "Enter New Author Name : ";
