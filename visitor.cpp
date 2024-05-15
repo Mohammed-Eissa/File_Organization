@@ -313,7 +313,7 @@ void Visitor::display(short off)
 {
     if (off == -1)
     {
-        cout << "Book not found\n";
+        cout << "Visitor not found\n";
         return;
     }
 
@@ -380,7 +380,7 @@ void Visitor::display_top5()
         i++;
     }
     if (!i)
-        cout << "No Books To Display\n";
+        cout << "No Visitors To Display\n";
 }
 
 void Visitor::Update(visitor v, int id)
