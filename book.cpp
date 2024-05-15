@@ -400,9 +400,9 @@ void Book::Update(book b, int id)
         bookr.close();
         bookw.close();
         remove_by_id(id);
-        insert_available(b, total_len);
+        insert(b);
+        cout << "Book Updated successfully.\n";
     }
-    cout << "The book updated Successfully\n";
 }
 
 int Book::rec_length(short offset)

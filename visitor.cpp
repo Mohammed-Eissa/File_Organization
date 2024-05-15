@@ -400,7 +400,8 @@ void Visitor::Update(visitor v, int id)
         visitorr.close();
         visitorw.close();
         remove_by_id(id);
-        insert_available(v, total_len);
+        insert(v);
+        cout << "visitor Updated successfully.\n";
     }
 }
 
