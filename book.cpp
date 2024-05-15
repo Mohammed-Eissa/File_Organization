@@ -221,7 +221,7 @@ void Book::remove_by_id(int id)
     books.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
-    cout << "visitor deleted successfully\n";
+    cout << "Book deleted successfully\n";
 }
 void Book::remove_by_name(char name[])
 {
@@ -239,7 +239,7 @@ void Book::remove_by_name(char name[])
     books.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
-    cout << "visitor deleted successfully\n";
+    cout << "Book deleted successfully\n";
 }
 
 int Book::search_By_id(int id)
@@ -293,10 +293,10 @@ int Book::search_By_name(char name[50])
         cout << "There is multible Books with the same name : \n";
         for (auto i : idx)
         {
-            cout << "Visitor " << j++ << ":- ";
+            cout << "Book " << j++ << ":- ";
             display(primary[secondry[i]]);
         }
-        cout << "Please chose the number of the visitor from previous Books data : ";
+        cout << "Please chose the number of the Book from previous Books data : ";
         int number;
         cin >> number;
         tmp_name = idx[number - 1];
