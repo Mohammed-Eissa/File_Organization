@@ -350,6 +350,8 @@ void Book::display_top5()
 void Book::Update(book b, int id)
 {
     short off = search_By_id(id);
+    if (off == -1)
+        return void(cout << "There is no books with this id\n");
     int len_old = rec_length(off);
     int id_len = sizeof(b.id);
     int name_len = strlen(b.name) + 1;

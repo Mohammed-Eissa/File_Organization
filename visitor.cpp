@@ -92,9 +92,9 @@ void Visitor::insert(visitor v)
 {
     int id_len = sizeof(v.id);
     int name_len = strlen(v.name) + 1;
-    int book_len = strlen(v.Visit_Date) + 1;
-    int date_len = strlen(v.Borrowed_book) + 1;
-    int total_len = id_len + name_len + book_len + date_len + 4 * sizeof(int);
+    int date_len = strlen(v.Visit_Date) + 1;
+    int book_len = strlen(v.Borrowed_book) + 1;
+    int total_len = id_len + name_len + date_len + book_len + 4 * sizeof(int);
     if (header == -1)
         insert_end(v);
     else
@@ -126,8 +126,8 @@ bool Visitor::insert_available(visitor v, int t_len)
             visitorw.seekp(cur, ios::beg);
             int id_len = sizeof(v.id);
             int name_len = strlen(v.name) + 1;
-            int book_len = strlen(v.Visit_Date) + 1;
-            int date_len = strlen(v.Borrowed_book) + 1;
+            int date_len = strlen(v.Visit_Date) + 1;
+            int book_len = strlen(v.Borrowed_book) + 1;
             visitorw.write((char *)&id_len, sizeof(int));
             visitorw.write((char *)&v.id, id_len);
             visitorw.write((char *)&name_len, sizeof(int));
@@ -175,9 +175,8 @@ void Visitor::insert_end(visitor v)
     {
         int id_len = sizeof(v.id);
         int name_len = strlen(v.name) + 1;
-        int book_len = strlen(v.Visit_Date) + 1;
-        int date_len = strlen(v.Borrowed_book) + 1;
-        int total_len = id_len + name_len + book_len + date_len + 4 * sizeof(int);
+        int date_len = strlen(v.Visit_Date) + 1;
+        int book_len = strlen(v.Borrowed_book) + 1;
 
         visitor.seekp(0, ios::end);
         short offset = visitor.tellp();
@@ -268,34 +267,36 @@ int Visitor::search_By_name(char name[50])
 {
     string t(name);
     int n = t.size();
-    vector<string>idx;
-    for(auto [i,j]:secondry)
+    vector<string> idx;
+    for (auto [i, j] : secondry)
     {
-        if(n<=i.size())
+        if (n <= i.size())
         {
-            if(i.substr(0,n)==t)
+            if (i.substr(0, n) == t)
                 idx.push_back(i);
         }
     }
-    if(!idx.size())return -1;
-    if(idx.size()==1)
+    if (!idx.size())
+        return -1;
+    if (idx.size() == 1)
     {
         tmp_name = idx[0];
         tmp_id = secondry[tmp_name];
         return primary[tmp_id];
     }
-    else{
+    else
+    {
         int j = 1;
-        cout<<"There is multible visitors with the same name : \n";
-        for(auto i:idx)
+        cout << "There is multible visitors with the same name : \n";
+        for (auto i : idx)
         {
-            cout<<"Visitor "<< j++ <<":- ";
+            cout << "Visitor " << j++ << ":- ";
             display(primary[secondry[i]]);
         }
-        cout<<"Please chose the number of the visitor from previous visitors data : ";
+        cout << "Please chose the number of the visitor from previous visitors data : ";
         int number;
-        cin>>number;
-        tmp_name = idx[number-1];
+        cin >> number;
+        tmp_name = idx[number - 1];
         tmp_id = secondry[tmp_name];
         return primary[tmp_id];
     }
@@ -382,6 +383,8 @@ void Visitor::display_top5()
 void Visitor::Update(visitor v, int id)
 {
     short off = search_By_id(id);
+    if (off == -1)
+        return void(cout << "There is no visitors with this id\n");
     int len_old = rec_length(off);
     int id_len = sizeof(v.id);
     int name_len = strlen(v.name) + 1;
