@@ -379,6 +379,8 @@ void Visitor::display_top5()
             visitors.get(delim);
         i++;
     }
+    if (!i)
+        cout << "No Books To Display\n";
 }
 
 void Visitor::Update(visitor v, int id)

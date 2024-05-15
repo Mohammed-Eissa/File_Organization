@@ -228,7 +228,7 @@ void Book::remove_by_name(char name[])
     short offset = search_By_name(name);
     if (offset == -1)
     {
-        cout << "There is no books with this ID\n";
+        cout << "There is no books with this Name\n";
         return;
     }
     fstream books("book.txt", ios::in | ios::out | ios::binary);
@@ -339,6 +339,7 @@ void Book::display_top5()
     books.seekg(0, ios::end);
     int end_of_file = books.tellg();
     books.seekg(2, ios::beg);
+    int c = 0;
     book b;
     int i = 0;
     while (books.tellg() < end_of_file && i < 5)
@@ -375,6 +376,7 @@ void Book::display_top5()
             books.get(delim);
         i++;
     }
+    if(!i)cout<<"No Books To Display\n";
 }
 
 void Book::Update(book b, int id)
