@@ -35,6 +35,7 @@ public:
     void display(short);
     void display_top5();
     void Update(visitor, int);
+    void Update(visitor&, char[]);
     int rec_length(short);
     int search_By_id(int);
     int search_By_name(char[]);

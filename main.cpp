@@ -67,19 +67,19 @@ void Main_Menu()
                 }
                 break;
             case 3:
-                cout << "\n1. Delete By ID \n2. Delete By Name \n3. Go back \n"
+                cout << "\n1. Delete a specific Visitor By ID \n2. Delete a specific Visitor By Name \n3. Go back \n"
                      << endl;
                 cin >> ch;
                 switch (ch)
                 {
                 case 1:
-                    cout << "Enter ID of Visitor to delete: ";
+                    cout << "Enter ID of Visitor you want to delete: ";
                     int deleteId;
                     cin >> deleteId;
                     V.remove_by_id(deleteId); ///+
                     break;
                 case 2:
-                    cout << "Enter Name of Visitor to delete: ";
+                    cout << "Enter Name of Visitor you want to delete: ";
                     char deleteN[50];
                     cin.ignore();
                     cin.getline(deleteN,50);
@@ -93,16 +93,41 @@ void Main_Menu()
                 }
                 break;
             case 4:
-                cout << "Enter ID of Visitor to update: ";
-                cin >> v.id;
-                cin.ignore();
-                cout << "Enter Visitor Name : ";
-                cin.getline(v.name, 50);
-                cout << "Enter Visit Date : ";
-                cin.getline(v.Visit_Date, 50);
-                cout << "Enter Borrowed book : ";
-                cin.getline(v.Borrowed_book, 50);
-                V.Update(v, v.id); ///+
+                cout << "\n1. Update a specific Visitor by ID \n2. Update a specific Visitor by name \n3. Go back \n"
+                     << endl;
+                cin >> ch;
+                switch (ch)
+                {
+                case 1:
+                    cout << "Enter The ID of Visitor you want to Update: ";
+                    cout << "Enter ID of Visitor to update: ";
+                    cin >> v.id;
+                    cin.ignore();
+                    cout << "Enter New Visitor Name : ";
+                    cin.getline(v.name, 50);
+                    cout << "Enter New Visit Date : ";
+                    cin.getline(v.Visit_Date, 50);
+                    cout << "Enter New Borrowed book : ";
+                    cin.getline(v.Borrowed_book, 50);
+                    V.Update(v, v.id); ///+
+                    break;
+                case 2:
+                    cout << "Enter The Name of Visitor you want to Update: ";
+                    char name[50];
+                    cin.ignore();
+                    cin.getline(name, 50);
+                    cout << "Enter New Visit Date : ";
+                    cin.getline(v.Visit_Date, 50);
+                    cout << "Enter New Borrowed book : ";
+                    cin.getline(v.Borrowed_book, 50);
+                    V.Update(v,v.name); ///+
+                    break;
+                case 3:
+                    goto BackStep1;
+                    break;
+                default:
+                    cout << "Invalid choice" << endl;
+                }
                 break;
             case 5:
                 cout << "\n1. Search By ID \n2. Search By Name \n3. Go back \n"

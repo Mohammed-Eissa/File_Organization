@@ -215,11 +215,11 @@ void Visitor::remove_by_id(int id)
     visitor.write((char *)&deletedFlag, sizeof(char));
     visitor.write((char *)&header, sizeof(short));
     visitor.write((char *)&len, sizeof(int));
-    cout << header << ' ' << len << '\n';
     header = offset;
     visitor.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
+    cout<<"visitor deleted successfully\n";
 }
 void Visitor::remove_by_name(char name[])
 {
@@ -237,6 +237,7 @@ void Visitor::remove_by_name(char name[])
     visitor.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
+    cout << "visitor deleted successfully\n";
 }
 
 int Visitor::search_By_id(int id)
@@ -401,13 +402,13 @@ void Visitor::Update(visitor v, int id)
         visitorw.write((char *)&v.id, id_len);
 
         visitorw.write((char *)&name_len, sizeof(int));
-        visitorw.write((char *)v.name, name_len);
+        visitorw.write((char *)&v.name, name_len);
 
         visitorw.write((char *)&date_len, sizeof(int));
-        visitorw.write((char *)v.Visit_Date, date_len);
+        visitorw.write((char *)&v.Visit_Date, date_len);
 
         visitorw.write((char *)&book_len, sizeof(int));
-        visitorw.write((char *)v.Borrowed_book, book_len);
+        visitorw.write((char *)&v.Borrowed_book, book_len);
 
         tmp_id = id;
         tmp_name = string(v.name);
@@ -431,6 +432,67 @@ void Visitor::Update(visitor v, int id)
         visitorr.close();
         visitorw.close();
         remove_by_id(id);
+        insert(v);
+        cout << "visitor Updated successfully.\n";
+    }
+}
+
+void Visitor::Update(visitor &v,char name[])
+{
+    short off = search_By_name(name);
+    if (off == -1)
+        return void(cout << "There is no visitors with this id\n");
+        int sz = tmp_name.size();
+    for(int i = 0; i < sz;i++)
+    v.name[i]=tmp_name[i];
+    v.name[sz]='\0';
+    v.id=tmp_id;
+    int len_old = rec_length(off);
+    int id_len = sizeof(v.id);
+    int name_len = strlen(v.name) + 1;
+    int book_len = strlen(v.Borrowed_book) + 1;
+    int date_len = strlen(v.Visit_Date) + 1;
+    int total_len = id_len + name_len + book_len + date_len + 4 * sizeof(int);
+    ifstream visitorr("visitor.txt", ios::binary);
+    fstream visitorw("visitor.txt", ios::in | ios::out | ios::binary);
+    if (len_old >= total_len)
+    {
+        visitorw.seekp(off, ios::beg);
+
+        visitorw.write((char *)&id_len, sizeof(int));
+        visitorw.write((char *)&v.id, id_len);
+
+        visitorw.write((char *)&name_len, sizeof(int));
+        visitorw.write((char *)&v.name, name_len);
+
+        visitorw.write((char *)&date_len, sizeof(int));
+        visitorw.write((char *)&v.Visit_Date, date_len);
+
+        visitorw.write((char *)&book_len, sizeof(int));
+        visitorw.write((char *)&v.Borrowed_book, book_len);
+
+        tmp_id = v.id;
+        tmp_name = string(v.name);
+        primary[tmp_id] = off;
+        secondry[tmp_name] = tmp_id;
+        cout << "visitor Updated successfully.\n";
+        visitorr.seekg(visitorw.tellp(), ios::beg);
+
+        char ch;
+        visitorr.get(ch);
+        while (ch != '|')
+        {
+            visitorw.put('_');
+            visitorr.get(ch);
+        }
+        visitorr.close();
+        visitorw.close();
+    }
+    else
+    {
+        visitorr.close();
+        visitorw.close();
+        remove_by_id(v.id);
         insert(v);
         cout << "visitor Updated successfully.\n";
     }
