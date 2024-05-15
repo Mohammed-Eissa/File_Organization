@@ -35,6 +35,7 @@ public:
     void display(short);
     void display_top5();
     void Update(book,int);
+    void Update(book&,char[]);
     int rec_length(short);
     int search_By_id(int);
     int search_By_name(char[]);

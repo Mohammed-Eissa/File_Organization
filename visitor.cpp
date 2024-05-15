@@ -383,6 +383,7 @@ void Visitor::display_top5()
 
 void Visitor::Update(visitor v, int id)
 {
+    
     short off = search_By_id(id);
     if (off == -1)
         return void(cout << "There is no visitors with this id\n");
@@ -442,7 +443,11 @@ void Visitor::Update(visitor &v,char name[])
     short off = search_By_name(name);
     if (off == -1)
         return void(cout << "There is no visitors with this id\n");
-        int sz = tmp_name.size();
+    cout << "Enter New Visit Date : ";
+    cin.getline(v.Visit_Date, 50);
+    cout << "Enter New Borrowed book : ";
+    cin.getline(v.Borrowed_book, 50);
+    int sz = tmp_name.size();
     for(int i = 0; i < sz;i++)
     v.name[i]=tmp_name[i];
     v.name[sz]='\0';

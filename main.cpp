@@ -116,10 +116,6 @@ void Main_Menu()
                     char name[50];
                     cin.ignore();
                     cin.getline(name, 50);
-                    cout << "Enter New Visit Date : ";
-                    cin.getline(v.Visit_Date, 50);
-                    cout << "Enter New Borrowed book : ";
-                    cin.getline(v.Borrowed_book, 50);
                     V.Update(v,v.name); ///+
                     break;
                 case 3:
@@ -241,16 +237,37 @@ void Main_Menu()
                 }
                 break;
             case 4:
-                cout << "Enter ID of BOOK to update: ";
-                cin >> b.id;
-                cin.ignore();
-                cout << "Enter book Name : ";
-                cin.getline(b.name, 50);
-                cout << "Enter book Category : ";
-                cin.getline(b.category, 50);
-                cout << "Enter Author Name : ";
-                cin.getline(b.author, 50);
-                B.Update(b, b.id);
+                cout << "\n1. Update a specific Book by ID \n2. Update a specific Book by name \n3. Go back \n"
+                     << endl;
+                cin >> ch;
+                switch (ch)
+                {
+                case 1:
+                    cout << "Enter The ID of Book you want to Update: ";
+                    cout << "Enter ID of Book to update: ";
+                    cin >> b.id;
+                    cin.ignore();
+                    cout << "Enter New book Name : ";
+                    cin.getline(b.name, 50);
+                    cout << "Enter New book Category : ";
+                    cin.getline(b.category, 50);
+                    cout << "Enter New Author Name : ";
+                    cin.getline(b.author, 50);
+                    B.Update(b, b.id); ///+
+                    break;
+                case 2:
+                    cout << "Enter The Name of Book you want to Update: ";
+                    char name[50];
+                    cin.ignore();
+                    cin.getline(name, 50);
+                    B.Update(b, name); ///+
+                    break;
+                case 3:
+                    goto BackStep1;
+                    break;
+                default:
+                    cout << "Invalid choice" << endl;
+                }
                 break;
             case 5:
                 cout << "\n1. Search By ID \n2. Search By Name \n3. Go back \n"

@@ -221,6 +221,7 @@ void Book::remove_by_id(int id)
     books.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
+    cout << "visitor deleted successfully\n";
 }
 void Book::remove_by_name(char name[])
 {
@@ -238,6 +239,7 @@ void Book::remove_by_name(char name[])
     books.close();
     primary.erase(tmp_id);
     secondry.erase(tmp_name);
+    cout << "visitor deleted successfully\n";
 }
 
 int Book::search_By_id(int id)
@@ -267,12 +269,40 @@ int Book::search_By_id(int id)
 int Book::search_By_name(char name[50])
 {
     string t(name);
-    if (secondry.find(t) != secondry.end())
+    int n = t.size();
+    vector<string> idx;
+    for (auto [i, j] : secondry)
     {
-        tmp_name = t;
-        return primary[secondry[t]];
+        if (n <= i.size())
+        {
+            if (i.substr(0, n) == t)
+                idx.push_back(i);
+        }
     }
-    return -1;
+    if (!idx.size())
+        return -1;
+    if (idx.size() == 1)
+    {
+        tmp_name = idx[0];
+        tmp_id = secondry[tmp_name];
+        return primary[tmp_id];
+    }
+    else
+    {
+        int j = 1;
+        cout << "There is multible Books with the same name : \n";
+        for (auto i : idx)
+        {
+            cout << "Visitor " << j++ << ":- ";
+            display(primary[secondry[i]]);
+        }
+        cout << "Please chose the number of the visitor from previous Books data : ";
+        int number;
+        cin >> number;
+        tmp_name = idx[number - 1];
+        tmp_id = secondry[tmp_name];
+        return primary[tmp_id];
+    }
 }
 
 void Book::display(short off)
@@ -398,6 +428,72 @@ void Book::Update(book b, int id)
         bookr.close();
         bookw.close();
         remove_by_id(id);
+        insert(b);
+        cout << "Book Updated successfully.\n";
+    }
+}
+
+void Book::Update(book &b, char name[])
+{
+    short off = search_By_name(name);
+    if (off == -1)
+        return void(cout << "There is no books with this name\n");
+    cin.ignore();
+    cout << "Enter New book Category : ";
+    cin.getline(b.category, 50);
+    cout << "Enter New Author Name : ";
+    cin.getline(b.author, 50);
+    int sz = tmp_name.size();
+    for (int i = 0; i < sz; i++)
+        b.name[i] = tmp_name[i];
+    b.name[sz] = '\0';
+    b.id = tmp_id;
+    int len_old = rec_length(off);
+    int id_len = sizeof(b.id);
+    int name_len = strlen(b.name) + 1;
+    int author_len = strlen(b.author) + 1;
+    int category_len = strlen(b.category) + 1;
+    int total_len = id_len + name_len + author_len + category_len + 4 * sizeof(int);
+    ifstream bookr("book.txt", ios::binary);
+    fstream bookw("book.txt", ios::in | ios::out | ios::binary);
+    if (len_old >= total_len)
+    {
+        bookw.seekp(off, ios::beg);
+
+        bookw.write((char *)&id_len, sizeof(int));
+        bookw.write((char *)&b.id, id_len);
+
+        bookw.write((char *)&name_len, sizeof(int));
+        bookw.write((char *)&b.name, name_len);
+
+        bookw.write((char *)&author_len, sizeof(int));
+        bookw.write((char *)&b.author, author_len);
+
+        bookw.write((char *)&category_len, sizeof(int));
+        bookw.write((char *)&b.category, category_len);
+
+        tmp_id = b.id;
+        tmp_name = string(b.name);
+        primary[tmp_id] = off;
+        secondry[tmp_name] = tmp_id;
+        cout << "Book Updated successfully.\n";
+        bookr.seekg(bookw.tellp(), ios::beg);
+
+        char ch;
+        bookr.get(ch);
+        while (ch != '|')
+        {
+            bookw.put('_');
+            bookr.get(ch);
+        }
+        bookr.close();
+        bookw.close();
+    }
+    else
+    {
+        bookr.close();
+        bookw.close();
+        remove_by_id(b.id);
         insert(b);
         cout << "Book Updated successfully.\n";
     }
