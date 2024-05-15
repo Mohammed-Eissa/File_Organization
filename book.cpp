@@ -5,7 +5,7 @@ Book::Book()
 {
     initial();
     tmp_id = -1;
-    char c[20];
+    char c[50];
     ifstream books("book.txt", ios::binary);
     books.seekg(0, ios::beg);
     books.read((char *)&header, sizeof(short));
@@ -30,12 +30,12 @@ Book::Book()
     sec.seekg(0, ios::end);
     is_end = sec.tellg();
     sec.seekg(0, ios::beg);
-    char name[20];
+    char name[50];
     while (true)
     {
         if (sec.tellg() == is_end)
             break;
-        sec.read((char *)&name, 20);
+        sec.read((char *)&name, 50);
         sec.read((char *)&id, sizeof(int));
         string s(name);
         secondry[string(name)] = id;
@@ -56,7 +56,7 @@ Book::~Book()
     primary.clear();
     prim.close();
     fstream sec("secondry.txt", ios::out | ios::binary);
-    char name[20];
+    char name[50];
     string tmp;
     int len;
     for (auto [i, j] : secondry)
@@ -67,7 +67,7 @@ Book::~Book()
         for (int k = 0; k < len; k++)
             name[k] = i[k];
         name[len] = '\0';
-        sec.write((char *)&name, 20);
+        sec.write((char *)&name, 50);
         sec.write((char *)&j, sizeof(int));
     }
     sec.close();
@@ -264,7 +264,7 @@ int Book::search_By_id(int id)
     return -1;
 }
 
-int Book::search_By_name(char name[20])
+int Book::search_By_name(char name[50])
 {
     string t(name);
     if (secondry.find(t) != secondry.end())
@@ -311,13 +311,9 @@ void Book::display_top5()
     books.seekg(2, ios::beg);
     book b;
     int i = 0;
-    while (books.tellg() == end_of_file && i < 5)
+    while (books.tellg() < end_of_file && i < 5)
     {
         char firstChar;
-        if (books.tellg() == end_of_file)
-        {
-            break;
-        }
         books.read((char *)&firstChar, sizeof(char));
         if (firstChar == '*')
         {

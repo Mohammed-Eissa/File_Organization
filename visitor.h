@@ -11,7 +11,7 @@ using namespace std;
 struct visitor
 {
     int id;
-    char name[20], Visit_Date[20], Borrowed_book[20];
+    char name[50], Visit_Date[50], Borrowed_book[50];
 };
 
 class Visitor

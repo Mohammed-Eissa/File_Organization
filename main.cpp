@@ -30,11 +30,11 @@ void Main_Menu()
                 cin >> v.id;
                 cin.ignore();
                 cout << "Enter Visitor Name : ";
-                cin.getline(v.name, 20);
+                cin.getline(v.name, 50);
                 cout << "Enter Visit_Date : ";
-                cin.getline(v.Visit_Date, 20);
+                cin.getline(v.Visit_Date, 50);
                 cout << "Enter Borrowed_book : ";
-                cin.getline(v.Borrowed_book, 20);
+                cin.getline(v.Borrowed_book, 50);
                 V.insert(v); ///+
                 break;
             case 2:
@@ -51,9 +51,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter The Name of Visitor you want to display: ";
-                    char searchN[20];
+                    char searchN[50];
                     cin.ignore();
-                    cin.getline(searchN,20);
+                    cin.getline(searchN,50);
                     V.display(V.search_By_name(searchN)); ///+
                     break;
                 case 3:
@@ -80,9 +80,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter Name of Visitor to delete: ";
-                    char deleteN[20];
+                    char deleteN[50];
                     cin.ignore();
-                    cin.getline(deleteN,20);
+                    cin.getline(deleteN,50);
                     V.remove_by_name(deleteN); ///+
                     break;
                 case 3:
@@ -97,11 +97,11 @@ void Main_Menu()
                 cin >> v.id;
                 cin.ignore();
                 cout << "Enter Visitor Name : ";
-                cin.getline(v.name, 20);
+                cin.getline(v.name, 50);
                 cout << "Enter Visit Date : ";
-                cin.getline(v.Visit_Date, 20);
+                cin.getline(v.Visit_Date, 50);
                 cout << "Enter Borrowed book : ";
-                cin.getline(v.Borrowed_book, 20);
+                cin.getline(v.Borrowed_book, 50);
                 V.Update(v, v.id); ///+
                 break;
             case 5:
@@ -118,9 +118,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter The Name of the Visitor you are searching for: ";
-                    char searchN[20];
+                    char searchN[50];
                     cin.ignore();
-                    cin.getline(searchN,20);
+                    cin.getline(searchN,50);
                     V.display(V.search_By_name(searchN)); ///+
                     break;
                 case 3:
@@ -153,11 +153,11 @@ void Main_Menu()
                 cin >> b.id;
                 cin.ignore();
                 cout << "Enter book Name : ";
-                cin.getline(b.name, 20);
+                cin.getline(b.name, 50);
                 cout << "Enter book Category : ";
-                cin.getline(b.category, 20);
+                cin.getline(b.category, 50);
                 cout << "Enter Author Name : ";
-                cin.getline(b.author, 20);
+                cin.getline(b.author, 50);
                 B.insert(b);
                 break;
             case 2:
@@ -174,9 +174,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter The Name of the Book you want to display: ";
-                    char searchN[20];
+                    char searchN[50];
                     cin.ignore();
-                    cin.getline(searchN,20);
+                    cin.getline(searchN,50);
                     B.display(B.search_By_name(searchN));
                     break;
                 case 3:
@@ -203,9 +203,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter Name of BOOK to delete: ";
-                    char deleteN[20];
+                    char deleteN[50];
                     cin.ignore();
-                    cin.getline(deleteN,20);
+                    cin.getline(deleteN,50);
                     B.remove_by_name(deleteN);
                     break;
                 case 3:
@@ -220,11 +220,11 @@ void Main_Menu()
                 cin >> b.id;
                 cin.ignore();
                 cout << "Enter book Name : ";
-                cin.getline(b.name, 20);
+                cin.getline(b.name, 50);
                 cout << "Enter book Category : ";
-                cin.getline(b.category, 20);
+                cin.getline(b.category, 50);
                 cout << "Enter Author Name : ";
-                cin.getline(b.author, 20);
+                cin.getline(b.author, 50);
                 B.Update(b, b.id);
                 break;
             case 5:
@@ -241,9 +241,9 @@ void Main_Menu()
                     break;
                 case 2:
                     cout << "Enter The Name of the Book you are searching for: ";
-                    char searchN[20];
+                    char searchN[50];
                     cin.ignore();
-                    cin.getline(searchN,20);
+                    cin.getline(searchN,50);
                     B.display(B.search_By_name(searchN));
                     break;
                 case 3:

@@ -5,7 +5,7 @@ Visitor::Visitor()
 {
     initial();
     tmp_id = -1;
-    char c[20];
+    char c[50];
     ifstream visitor("visitor.txt", ios::binary);
     visitor.seekg(0, ios::beg);
     visitor.read((char *)&header, sizeof(short));
@@ -30,12 +30,12 @@ Visitor::Visitor()
     sec.seekg(0, ios::end);
     is_end = sec.tellg();
     sec.seekg(0, ios::beg);
-    char name[20];
+    char name[50];
     while (true)
     {
         if (sec.tellg() == is_end)
             break;
-        sec.read((char *)&name, 20);
+        sec.read((char *)&name, 50);
         sec.read((char *)&id, sizeof(int));
         string s(name);
         secondry[string(name)] = id;
@@ -56,7 +56,7 @@ Visitor::~Visitor()
     primary.clear();
     prim.close();
     fstream sec("visitor_secondry.txt", ios::out | ios::binary);
-    char name[20];
+    char name[50];
     string tmp;
     int len;
     for (auto [i, j] : secondry)
@@ -67,7 +67,7 @@ Visitor::~Visitor()
         for (int k = 0; k < len; k++)
             name[k] = i[k];
         name[len] = '\0';
-        sec.write((char *)&name, 20);
+        sec.write((char *)&name, 50);
         sec.write((char *)&j, sizeof(int));
     }
     sec.close();
@@ -177,7 +177,7 @@ void Visitor::insert_end(visitor v)
         int name_len = strlen(v.name) + 1;
         int book_len = strlen(v.Visit_Date) + 1;
         int date_len = strlen(v.Borrowed_book) + 1;
-        int total_len = id_len + name_len + book_len + date_len + 4 * sizeof(int) + 1;
+        int total_len = id_len + name_len + book_len + date_len + 4 * sizeof(int);
 
         visitor.seekp(0, ios::end);
         short offset = visitor.tellp();
@@ -264,15 +264,47 @@ int Visitor::search_By_id(int id)
     return -1;
 }
 
-int Visitor::search_By_name(char name[20])
+int Visitor::search_By_name(char name[50])
 {
     string t(name);
-    if (secondry.find(t) != secondry.end())
+    int n = t.size();
+    vector<string>idx;
+    for(auto [i,j]:secondry)
     {
-        tmp_name = t;
-        return primary[secondry[t]];
+        if(n<=i.size())
+        {
+            if(i.substr(0,n)==t)
+                idx.push_back(i);
+        }
     }
-    return -1;
+    if(!idx.size())return -1;
+    if(idx.size()==1)
+    {
+        tmp_name = idx[0];
+        tmp_id = secondry[tmp_name];
+        return primary[tmp_id];
+    }
+    else{
+        int j = 1;
+        cout<<"There is multible visitors with the same name : \n";
+        for(auto i:idx)
+        {
+            cout<<"Visitor "<< j++ <<":- ";
+            display(primary[secondry[i]]);
+        }
+        cout<<"Please chose the number of the visitor from previous visitors data : ";
+        int number;
+        cin>>number;
+        tmp_name = idx[number-1];
+        tmp_id = secondry[tmp_name];
+        return primary[tmp_id];
+    }
+    // if (secondry.find(t) != secondry.end())
+    // {
+    //     tmp_name = t;
+    //     return primary[secondry[t]];
+    // }
+    // return -1;
 }
 
 void Visitor::display(short off)
@@ -311,13 +343,9 @@ void Visitor::display_top5()
     visitors.seekg(2, ios::beg);
     visitor student;
     int i = 0;
-    while (visitors.tellg() <= end_of_file && i < 5)
+    while (visitors.tellg() < end_of_file && i < 5)
     {
         char firstChar;
-        if (visitors.tellg() == end_of_file)
-        {
-            break;
-        }
         visitors.read((char *)&firstChar, sizeof(char));
         if (firstChar == '*')
         {
@@ -342,7 +370,7 @@ void Visitor::display_top5()
         visitors.read((char *)&student.Visit_Date, len);
         visitors.read((char *)&len, sizeof(int));
         visitors.read((char *)&student.Borrowed_book, len);
-        cout << "ID: " << student.id << ", Name: " << student.name << ", author: " << student.Visit_Date << ", category: " << student.Borrowed_book << endl;
+        cout << "ID: " << student.id << ", Name: " << student.name << ", Visit Date: " << student.Visit_Date << ", Borrowed book: " << student.Borrowed_book << endl;
         char delim;
         visitors.get(delim);
         while (delim == '_')

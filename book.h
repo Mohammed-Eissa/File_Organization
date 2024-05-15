@@ -11,7 +11,7 @@ using namespace std;
 struct book
 {
     int id;
-    char name[20], author[20], category[20];
+    char name[50], author[50], category[50];
 };
 
 class Book
