@@ -48,8 +48,6 @@ Visitor::~Visitor()
     fstream prim("visitor_primary.txt", ios::out | ios::binary);
     for (auto [i, j] : primary)
     {
-        if (j == -1)
-            continue;
         prim.write((char *)&i, sizeof(int));
         prim.write((char *)&j, sizeof(int));
     }
