@@ -227,10 +227,12 @@ void Visitor::remove_by_name(char name[])
         cout << "There is no visitor with this ID\n";
         return;
     }
+    int len = rec_length(offset);
     fstream visitor("visitor.txt", ios::in | ios::out | ios::binary);
     visitor.seekp(offset, ios::beg);
     visitor.write((char *)&deletedFlag, sizeof(char));
     visitor.write((char *)&header, sizeof(short));
+    visitor.write((char *)&len,sizeof(len));
     header = offset;
     visitor.close();
     primary.erase(tmp_id);

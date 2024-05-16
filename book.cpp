@@ -228,10 +228,12 @@ void Book::remove_by_name(char name[])
         cout << "There is no books with this Name\n";
         return;
     }
+    int len = rec_length(offset);
     fstream books("book.txt", ios::in | ios::out | ios::binary);
     books.seekp(offset, ios::beg);
     books.write((char *)&deletedFlag, sizeof(char));
     books.write((char *)&header, sizeof(short));
+    books.write((char *)&len, sizeof(int));
     header = offset;
     books.close();
     primary.erase(tmp_id);
@@ -361,7 +363,7 @@ void Book::display_top5()
         books.read((char *)&len, sizeof(int));
         books.read((char *)&b.id, len);
         books.read((char *)&len, sizeof(int));
-        books.read(b.name, len);
+        books.read((char *)&b.name, len);
         books.read((char *)&len, sizeof(int));
         books.read((char *)&b.author, len);
         books.read((char *)&len, sizeof(int));
@@ -373,7 +375,8 @@ void Book::display_top5()
             books.get(delim);
         i++;
     }
-    if(!i)cout<<"No Books To Display\n";
+    if (!i)
+        cout << "No Books To Display\n";
 }
 
 void Book::Update(book b, int id)

@@ -35,6 +35,12 @@ void Main_Menu()
                 cin.getline(v.Visit_Date, 50);
                 cout << "Enter Borrowed_book : ";
                 cin.getline(v.Borrowed_book, 50);
+                while (B.search_By_id(b.id)!=-1)
+                {
+                    cout << "This ID already exist please choose another one : ";
+                    cin >> b.id;
+                }
+                B.insert(b);
                 V.insert(v); ///+
                 break;
             case 2:
@@ -178,6 +184,11 @@ void Main_Menu()
                 cin.getline(b.category, 50);
                 cout << "Enter Author Name : ";
                 cin.getline(b.author, 50);
+                while(B.search_By_id(b.id)!=-1)
+                {
+                    cout<<"This ID already exist please choose another one : ";
+                    cin>>b.id;
+                }
                 B.insert(b);
                 break;
             case 2:
