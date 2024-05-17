@@ -38,7 +38,7 @@ Book::Book()
         sec.read((char *)&name, 50);
         sec.read((char *)&id, sizeof(int));
         string s(name);
-        secondry[string(name)] = id;
+        secondry[string(name)].insert(id);
     }
     sec.close();
 }
@@ -59,14 +59,12 @@ Book::~Book()
     int len;
     for (auto [i, j] : secondry)
     {
-        if (j == -1)
-            continue;
         len = sizeof(i);
         for (int k = 0; k < len; k++)
             name[k] = i[k];
         name[len] = '\0';
-        sec.write((char *)&name, 50);
-        sec.write((char *)&j, sizeof(int));
+        for (auto k : j)
+            sec.write((char *)&name, 50), sec.write((char *)&k, sizeof(int));
     }
     sec.close();
     fstream books("book.txt", ios::in | ios::out | ios::binary);
@@ -137,7 +135,7 @@ bool Book::insert_available(book b, int t_len)
             tmp_id = b.id;
             tmp_name = string(b.name);
             primary[tmp_id] = cur;
-            secondry[tmp_name] = tmp_id;
+            secondry[tmp_name].insert(tmp_id);
             cout << "Book added successfully.\n";
             bookr.seekg(bookw.tellp(), ios::beg);
             char c, r = '_';
@@ -191,7 +189,7 @@ void Book::insert_end(book b)
         tmp_id = b.id;
         tmp_name = string(b.name);
         primary[tmp_id] = offset;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "Book added successfully.\n";
     }
     else
@@ -217,12 +215,14 @@ void Book::remove_by_id(int id)
     header = offset;
     books.close();
     primary.erase(tmp_id);
-    secondry.erase(tmp_name);
+    secondry[tmp_name].erase(tmp_id);
+    if (secondry[tmp_name].empty())
+        secondry.erase(tmp_name);
     cout << "Book deleted successfully\n";
 }
 void Book::remove_by_name(char name[])
 {
-    short offset = search_By_name(name);
+    short offset = search_By_name(name,1);
     if (offset == -1)
     {
         cout << "There is no books with this Name\n";
@@ -237,7 +237,9 @@ void Book::remove_by_name(char name[])
     header = offset;
     books.close();
     primary.erase(tmp_id);
-    secondry.erase(tmp_name);
+    secondry[tmp_name].erase(tmp_id);
+    if (secondry[tmp_name].empty())
+        secondry.erase(tmp_name);
     cout << "Book deleted successfully\n";
 }
 
@@ -265,25 +267,26 @@ int Book::search_By_id(int id)
     return -1;
 }
 
-int Book::search_By_name(char name[50])
+int Book::search_By_name(char name[50], bool flag)
 {
     string t(name);
     int n = t.size();
-    vector<string> idx;
+    vector<pair<string, int>> idx;
     for (auto [i, j] : secondry)
     {
         if (n <= i.size())
         {
             if (i.substr(0, n) == t)
-                idx.push_back(i);
+                for (auto k : j)
+                    idx.emplace_back(i, k);
         }
     }
     if (!idx.size())
         return -1;
     if (idx.size() == 1)
     {
-        tmp_name = idx[0];
-        tmp_id = secondry[tmp_name];
+        tmp_name = idx[0].first;
+        tmp_id = idx[0].second;
         return primary[tmp_id];
     }
     else
@@ -293,14 +296,18 @@ int Book::search_By_name(char name[50])
         for (auto i : idx)
         {
             cout << "Book " << j++ << ":- ";
-            display(primary[secondry[i]]);
+            display(primary[i.second]);
         }
-        cout << "Please chose the number of the Book from previous Books data : ";
-        int number;
-        cin >> number;
-        tmp_name = idx[number - 1];
-        tmp_id = secondry[tmp_name];
-        return primary[tmp_id];
+        if(flag)
+        {
+            cout << "Please chose the number of the Book from previous Books data : ";
+            int number;
+            cin >> number;
+            tmp_name = idx[number - 1].first;
+            tmp_id = idx[number - 1].second;
+            return primary[tmp_id];
+        }
+        return -2;
     }
 }
 
@@ -311,6 +318,8 @@ void Book::display(short off)
         cout << "Book not found\n";
         return;
     }
+    else if(off == -2)
+        return;
 
     ifstream books("book.txt", ios::binary);
     books.seekg(off, ios::beg);
@@ -408,10 +417,14 @@ void Book::Update(book b, int id)
         bookw.write((char *)&category_len, sizeof(int));
         bookw.write((char *)b.category, category_len);
 
+        secondry[tmp_name].erase(tmp_id);
+        if (secondry[tmp_name].empty())
+            secondry.erase(tmp_name);
+
         tmp_id = id;
         tmp_name = string(b.name);
         primary[tmp_id] = off;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "Book Updated successfully.\n";
         bookr.seekg(bookw.tellp(), ios::beg);
 
@@ -437,7 +450,7 @@ void Book::Update(book b, int id)
 
 void Book::Update(book &b, char name[])
 {
-    short off = search_By_name(name);
+    short off = search_By_name(name,1);
     if (off == -1)
         return void(cout << "There is no books with this name\n");
     cout << "Enter New book Category : ";
@@ -476,7 +489,7 @@ void Book::Update(book &b, char name[])
         tmp_id = b.id;
         tmp_name = string(b.name);
         primary[tmp_id] = off;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "Book Updated successfully.\n";
         bookr.seekg(bookw.tellp(), ios::beg);
 

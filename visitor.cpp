@@ -38,7 +38,7 @@ Visitor::Visitor()
         sec.read((char *)&name, 50);
         sec.read((char *)&id, sizeof(int));
         string s(name);
-        secondry[string(name)] = id;
+        secondry[string(name)].insert(id);
     }
     sec.close();
 }
@@ -59,14 +59,12 @@ Visitor::~Visitor()
     int len;
     for (auto [i, j] : secondry)
     {
-        if (j == -1)
-            continue;
         len = sizeof(i);
         for (int k = 0; k < len; k++)
             name[k] = i[k];
         name[len] = '\0';
-        sec.write((char *)&name, 50);
-        sec.write((char *)&j, sizeof(int));
+        for (auto k : j)
+            sec.write((char *)&name, 50), sec.write((char *)&k, sizeof(int));
     }
     sec.close();
     fstream visitor("visitor.txt", ios::in | ios::out | ios::binary);
@@ -137,7 +135,7 @@ bool Visitor::insert_available(visitor v, int t_len)
             tmp_id = v.id;
             tmp_name = string(v.name);
             primary[tmp_id] = cur;
-            secondry[tmp_name] = tmp_id;
+            secondry[tmp_name].insert(tmp_id);
             cout << "visitor added successfully.\n";
             visitorr.seekg(visitorw.tellp(), ios::beg);
             char c, r = '_';
@@ -190,7 +188,7 @@ void Visitor::insert_end(visitor v)
         tmp_id = v.id;
         tmp_name = string(v.name);
         primary[tmp_id] = offset;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "visitor added successfully.\n";
     }
     else
@@ -216,12 +214,14 @@ void Visitor::remove_by_id(int id)
     header = offset;
     visitor.close();
     primary.erase(tmp_id);
-    secondry.erase(tmp_name);
-    cout<<"visitor deleted successfully\n";
+    secondry[tmp_name].erase(tmp_id);
+    if (secondry[tmp_name].empty())
+        secondry.erase(tmp_name);
+    cout << "visitor deleted successfully\n";
 }
 void Visitor::remove_by_name(char name[])
 {
-    short offset = search_By_name(name);
+    short offset = search_By_name(name,1);
     if (offset == -1)
     {
         cout << "There is no visitor with this ID\n";
@@ -232,11 +232,13 @@ void Visitor::remove_by_name(char name[])
     visitor.seekp(offset, ios::beg);
     visitor.write((char *)&deletedFlag, sizeof(char));
     visitor.write((char *)&header, sizeof(short));
-    visitor.write((char *)&len,sizeof(len));
+    visitor.write((char *)&len, sizeof(len));
     header = offset;
     visitor.close();
     primary.erase(tmp_id);
-    secondry.erase(tmp_name);
+    secondry[tmp_name].erase(tmp_id);
+    if (secondry[tmp_name].empty())
+        secondry.erase(tmp_name);
     cout << "visitor deleted successfully\n";
 }
 
@@ -264,25 +266,26 @@ int Visitor::search_By_id(int id)
     return -1;
 }
 
-int Visitor::search_By_name(char name[50])
+int Visitor::search_By_name(char name[50], bool flag)
 {
     string t(name);
     int n = t.size();
-    vector<string> idx;
+    vector<pair<string, int>> idx;
     for (auto [i, j] : secondry)
     {
         if (n <= i.size())
         {
             if (i.substr(0, n) == t)
-                idx.push_back(i);
+                for (auto k : j)
+                    idx.emplace_back(i, k);
         }
     }
     if (!idx.size())
         return -1;
     if (idx.size() == 1)
     {
-        tmp_name = idx[0];
-        tmp_id = secondry[tmp_name];
+        tmp_name = idx[0].first;
+        tmp_id = idx[0].second;
         return primary[tmp_id];
     }
     else
@@ -292,21 +295,19 @@ int Visitor::search_By_name(char name[50])
         for (auto i : idx)
         {
             cout << "Visitor " << j++ << ":- ";
-            display(primary[secondry[i]]);
+            display(primary[i.second]);
         }
-        cout << "Please chose the number of the visitor from previous visitors data : ";
-        int number;
-        cin >> number;
-        tmp_name = idx[number - 1];
-        tmp_id = secondry[tmp_name];
-        return primary[tmp_id];
+        if (flag)
+        {
+            cout << "Please chose the number of the visitor from previous visitors data : ";
+            int number;
+            cin >> number;
+            tmp_name = idx[number - 1].first;
+            tmp_id = idx[number - 1].second;
+            return primary[tmp_id];
+        }
+        return -2;
     }
-    // if (secondry.find(t) != secondry.end())
-    // {
-    //     tmp_name = t;
-    //     return primary[secondry[t]];
-    // }
-    // return -1;
 }
 
 void Visitor::display(short off)
@@ -316,7 +317,8 @@ void Visitor::display(short off)
         cout << "Visitor not found\n";
         return;
     }
-
+    if (off == -2)
+        return;
     ifstream visitors("visitor.txt", ios::binary);
     visitors.seekg(off, ios::beg);
     visitor student;
@@ -385,7 +387,7 @@ void Visitor::display_top5()
 
 void Visitor::Update(visitor v, int id)
 {
-    
+
     short off = search_By_id(id);
     if (off == -1)
         return void(cout << "There is no visitors with this id\n");
@@ -413,10 +415,14 @@ void Visitor::Update(visitor v, int id)
         visitorw.write((char *)&book_len, sizeof(int));
         visitorw.write((char *)&v.Borrowed_book, book_len);
 
+        secondry[tmp_name].erase(tmp_id);
+        if (secondry[tmp_name].empty())
+            secondry.erase(tmp_name);
+
         tmp_id = id;
         tmp_name = string(v.name);
         primary[tmp_id] = off;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "visitor Updated successfully.\n";
         visitorr.seekg(visitorw.tellp(), ios::beg);
 
@@ -440,9 +446,9 @@ void Visitor::Update(visitor v, int id)
     }
 }
 
-void Visitor::Update(visitor &v,char name[])
+void Visitor::Update(visitor &v, char name[])
 {
-    short off = search_By_name(name);
+    short off = search_By_name(name,1);
     if (off == -1)
         return void(cout << "There is no visitors with this id\n");
     cout << "Enter New Visit Date : ";
@@ -450,10 +456,10 @@ void Visitor::Update(visitor &v,char name[])
     cout << "Enter New Borrowed book : ";
     cin.getline(v.Borrowed_book, 50);
     int sz = tmp_name.size();
-    for(int i = 0; i < sz;i++)
-    v.name[i]=tmp_name[i];
-    v.name[sz]='\0';
-    v.id=tmp_id;
+    for (int i = 0; i < sz; i++)
+        v.name[i] = tmp_name[i];
+    v.name[sz] = '\0';
+    v.id = tmp_id;
     int len_old = rec_length(off);
     int id_len = sizeof(v.id);
     int name_len = strlen(v.name) + 1;
@@ -481,7 +487,7 @@ void Visitor::Update(visitor &v,char name[])
         tmp_id = v.id;
         tmp_name = string(v.name);
         primary[tmp_id] = off;
-        secondry[tmp_name] = tmp_id;
+        secondry[tmp_name].insert(tmp_id);
         cout << "visitor Updated successfully.\n";
         visitorr.seekg(visitorw.tellp(), ios::beg);
 

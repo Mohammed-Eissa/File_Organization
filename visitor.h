@@ -6,6 +6,7 @@
 #include <string.h>
 #include <vector>
 #include <map>
+#include <set>
 using namespace std;
 
 struct visitor
@@ -19,7 +20,7 @@ class Visitor
 private:
     short header;
     map<int, int> primary;
-    map<string, int> secondry;
+    map<string, set<int>> secondry;
     int tmp_id;
     string tmp_name;
 
@@ -38,6 +39,6 @@ public:
     void Update(visitor&, char[]);
     int rec_length(short);
     int search_By_id(int);
-    int search_By_name(char[]);
+    int search_By_name(char[],bool=0);
 };
 #endif
