@@ -75,12 +75,28 @@ Book::~Book()
 
 void Book::initial()
 {
-    fstream books("book.txt", ios::in | ios::out | ios::binary);
-    books.seekg(0, ios::end);
-    if (books.tellg() == 0)
+    fstream books("book.txt",ios::in | ios::binary);
+    if(!books.is_open())
     {
+        books.clear();
+        books.open("book.txt",ios::out | ios::binary);
         header = -1;
         books.write((char *)&header, sizeof(short));
+        books.close();
+    }
+    fstream prim("primary.txt",ios::in | ios::binary);
+    if(!prim.is_open())
+    {
+        prim.clear();
+        prim.open("primary.txt",ios::out | ios::binary);
+        prim.close();
+    }
+    fstream sec("secondry.txt",ios::in | ios::binary);
+    if(!sec.is_open())
+    {
+        sec.clear();
+        sec.open("secondry.txt",ios::out | ios::binary);
+        sec.close();
     }
 }
 

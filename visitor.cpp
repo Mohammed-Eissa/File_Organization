@@ -75,12 +75,28 @@ Visitor::~Visitor()
 
 void Visitor::initial()
 {
-    fstream visitor("visitor.txt", ios::in | ios::out | ios::binary);
-    visitor.seekg(0, ios::end);
-    if (visitor.tellg() == 0)
+    fstream visitor("visitor.txt", ios::in | ios::binary);
+    if (!visitor.is_open())
     {
+        visitor.clear();
+        visitor.open("visitor.txt", ios::out | ios::binary);
         header = -1;
         visitor.write((char *)&header, sizeof(short));
+        visitor.close();
+    }
+    fstream prim("visitor_primary.txt", ios::in | ios::binary);
+    if (!prim.is_open())
+    {
+        prim.clear();
+        prim.open("visitor_primary.txt", ios::out | ios::binary);
+        prim.close();
+    }
+    fstream sec("visitor_secondry.txt", ios::in | ios::binary);
+    if (!sec.is_open())
+    {
+        sec.clear();
+        sec.open("visitor_secondry.txt", ios::out | ios::binary);
+        sec.close();
     }
 }
 
